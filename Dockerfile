@@ -1,21 +1,47 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 
-# 1. Install development packages and clean up apt cache.
-RUN apt-get update && apt-get install -y \
-    curl \
-    g++ \
-    git \
-    libbz2-dev \
-    libfreetype6-dev \
+USER root
+
+RUN apt-get update
+
+# 1. development packages
+RUN apt-get install -y \
+    libssl-dev \
+    openssl \
     libicu-dev \
+    libbz2-dev \
+    libzip-dev \
+    libpng-dev \
     libjpeg-dev \
     libmcrypt-dev \
-    libpng-dev \
     libreadline-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    git \
+    zip \
+    curl \
     sudo \
     unzip \
+    g++
+
+RUN docker-php-ext-install \
+    bz2 \
+    intl \
+    iconv \
+    bcmath \
+    opcache \
+    calendar \
+    mbstring \
+    pdo \
+    pdo_mysql \
     zip \
-    && rm -rf /var/lib/apt/lists/*
+    soap \
+    gd
+
+RUN docker-php-ext-configure \
+    zip
+
 
 # 2. Apache configs + document root.
 RUN echo "ServerName laravel-app.local" >> /etc/apache2/apache2.conf
@@ -29,17 +55,6 @@ RUN a2enmod rewrite headers
 
 # 4. Start with base PHP config, then add extensions.
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-
-RUN docker-php-ext-install \
-    bcmath \
-    bz2 \
-    calendar \
-    iconv \
-    intl \
-    mbstring \
-    opcache \
-    pdo_mysql \
-    zip
 
 # 5. Composer.
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
