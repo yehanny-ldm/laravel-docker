@@ -13,6 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::group([
+        'prefix' => 'auth'
+    ], function () {
+
+        Route::group([
+            'middleware' => 'auth:api'
+        ], function () {
+            Route::get('logout', 'Auth\AuthController@logout');
+            Route::post('user', 'Auth\AuthController@user');
+            Route::resource('posts', 'Admin\PostController')->only([
+                'store', 'create', 'update', 'destroy'
+            ]);
+        });
+    });
 });
