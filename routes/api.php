@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::post('login', 'Auth\AuthController@login');
+Route::post('signup', 'Auth\AuthController@signup');
+
+
 Route::middleware('auth:api')->group(function () {
     Route::group([
         'prefix' => 'auth'
@@ -29,3 +33,4 @@ Route::middleware('auth:api')->group(function () {
         });
     });
 });
+

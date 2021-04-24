@@ -11,13 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Auth::routes();
+Route::get('/{any}','Admin\HomeController@index')->where('any','.*');
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/post/{id}', 'PostsController@show')->name('posts.show');
-
-Route::resource('comments', 'CommentsController');
