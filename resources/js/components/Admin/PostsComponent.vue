@@ -68,14 +68,14 @@
                         <p class="card-text">{{ post.content }}</p>
                         <p class="card-text">
                             <small class="text-muted">
-                                {{ moment(post.created_at,"DD-MM-YYYY").fromNow() }}
+                                {{ moment(post.created_at, "DD-MM-YYYY").fromNow() }}
                             </small>
                         </p>
                         <router-link
                             class="btn btn-outline-primary btn-block"
                             :to="{
                           name: 'PostDetails',
-                          params: { slug: post.slug }
+                          params: { id: post.id }
                         }">
                             Ver m&aacute;s
                         </router-link>
@@ -88,61 +88,30 @@
 </template>
 
 <script>
-    import moment from "moment";
-    import axios from 'axios';
+import moment from "moment";
+import axios from 'axios';
 
-    export default {
-        name: "Posts",
-        data() {
-            return {
-                moment: moment,
-                posts: [],
-                loading: true,
-                current_page: null,
-                last_page: null,
-                token: this.$store.state.token,
-                title: '',
-                content: '',
-                modal: false
-            }
-        },
-        methods: {
-            changePage(page) {
-                axios
-                    .get('/api/posts/?page=' + page)
-                    .then(response => {
-                        this.loading = false
-                        this.posts = response.data.data
-                        this.current_page = response.data.current_page
-                        this.last_page = response.data.last_page
-                        console.log(response.data)
-                    })
-            },
-            savePost() {
-                axios
-                    .post('api/auth/posts', {
-                        "title": this.title,
-                        "content_post": this.content
-
-                    }, {
-                        headers: {'Authorization': "Bearer " + this.token}
-                    })
-                    .then(response => {
-                        if (error.response !== 200) {
-                            this.modal = true
-                        }
-                        console.log(response.data)
-                    }).catch(function (error) {
-                        this.modal = true
-                        console.log(response.data)
-
-                    }
-                );
-            }
-        },
-        created() {
+export default {
+    name: "Posts",
+    data() {
+        return {
+            moment: moment,
+            posts: [],
+            loading: true,
+            current_page: null,
+            last_page: null,
+            token: this.$store.state.token,
+            title: '',
+            content: '',
+            modal: false
+        }
+    },
+    methods: {
+        changePage(page) {
             axios
-                .get('/api/posts')
+                .get('/api/auth/posts/?page=' + page, {
+                    headers: {'Authorization': "Bearer " + this.token}
+                })
                 .then(response => {
                     this.loading = false
                     this.posts = response.data.data
@@ -150,28 +119,68 @@
                     this.last_page = response.data.last_page
                     console.log(response.data)
                 })
-            console.log(this.posts)
         },
-        computed: {
-            filteredResources() {
-                if (this.searchQuery) {
-                    console.log(this.posts.filter(p => console.log(p.title)))
-                    return this.posts.filter((p) => p.title == this.searchQuery);
-                } else {
-                    return this.posts;
+        savePost() {
+            axios
+                .post('api/auth/posts', {
+                    "title": this.title,
+                    "content_post": this.content
+
+                }, {
+                    headers: {'Authorization': "Bearer " + this.token}
+                })
+                .then(response => {
+                    if (error.response !== 200) {
+                        this.modal = true
+                    }
+                    console.log(response.data)
+                }).catch(function (error) {
+                    this.modal = true
+                    console.log(response.data)
+
                 }
+            );
+        }
+    },
+    created() {
+
+        axios
+            .get('/api/auth/posts', {
+                headers: {'Authorization': "Bearer " + this.token}
+            })
+            .then(response => {
+                this.loading = false
+                this.posts = response.data.data
+                this.current_page = response.data.current_page
+                this.last_page = response.data.last_page
+                console.log(this.posts)
+
+            })
+
+        console.log(this.posts)
+    },
+    computed: {
+
+        filteredResources() {
+
+            if (this.searchQuery) {
+                console.log(this.posts.filter(p => console.log(p.title)))
+                return this.posts.filter((p) => p.title == this.searchQuery);
+            } else {
+                return this.posts;
             }
         }
     }
+}
 </script>
 
 <style scoped>
-    a {
-        cursor: pointer;
-    }
+a {
+    cursor: pointer;
+}
 
-    .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
-    }
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+}
 </style>

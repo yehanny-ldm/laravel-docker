@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostStoreRequest;
-use App\Models\Post;
+use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 
@@ -46,8 +47,7 @@ class PostController extends Controller
         $post = new Post;
         $post->title = $request->title;
         $post->content = $request->content_post;
-        $post->slug = (string)Str::orderedUuid();
-
+        $post->user_id = Auth::id();
         $response = [
             "message" => "Post generado correctamente",
             "code" => 200
@@ -68,9 +68,9 @@ class PostController extends Controller
      * @param \App\Models\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($id)
     {
-        return Post::where("slug", $slug)->first();
+        return Post::where("id", $id)->first();
     }
 
     /**

@@ -88,7 +88,7 @@
                 this.$store
                     .dispatch("retrieveToken", body)
                     .then(response => {
-                        this.$router.push({ name: "Dashboard" });
+                        this.$router.push({ name: "Posts" });
                     })
                     .catch(error => {
                         this.error = error.response.data;

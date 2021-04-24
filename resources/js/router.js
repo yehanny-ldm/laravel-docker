@@ -11,7 +11,7 @@ Vue.use(VueRouter)
 export default new VueRouter({
     routes: [
         {path: '/posts', name: "Posts", component: PostsComponent},
-        {path: '/post/:slug', name: "PostDetails", component: PostComponent, props: true},
+        {path: '/post/:id', name: "PostDetails", component: PostComponent, props: true},
         {path: '/login/', name: "Login", component: LoginComponent},
         {path: '/logout/', name: "Logout", component: LogoutComponent},
         { path: '', name: 'login', component: LoginComponent },

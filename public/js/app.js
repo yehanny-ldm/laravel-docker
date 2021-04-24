@@ -1809,7 +1809,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       moment: moment__WEBPACK_IMPORTED_MODULE_1___default.a,
-      slug: this.$route.params.slug,
+      id: this.$route.params.id,
       post: [],
       token: this.$store.state.token,
       edit: false,
@@ -1883,8 +1883,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   created: function created() {
     var _this4 = this;
 
-    console.log(this.slug);
-    axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/api/posts/' + this.slug).then(function (response) {
+    console.log("this.id");
+    console.log(this.id);
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/api/auth/posts/' + this.id, {
+      headers: {
+        'Authorization': "Bearer " + this.token
+      }
+    }).then(function (response) {
       _this4.post = response.data;
       console.log(_this4.post);
     });
@@ -2016,7 +2021,11 @@ __webpack_require__.r(__webpack_exports__);
     changePage: function changePage(page) {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/posts/?page=' + page).then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/auth/posts/?page=' + page, {
+        headers: {
+          'Authorization': "Bearer " + this.token
+        }
+      }).then(function (response) {
         _this.loading = false;
         _this.posts = response.data.data;
         _this.current_page = response.data.current_page;
@@ -2049,12 +2058,16 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this3 = this;
 
-    axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/posts').then(function (response) {
+    axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/auth/posts', {
+      headers: {
+        'Authorization': "Bearer " + this.token
+      }
+    }).then(function (response) {
       _this3.loading = false;
       _this3.posts = response.data.data;
       _this3.current_page = response.data.current_page;
       _this3.last_page = response.data.last_page;
-      console.log(response.data);
+      console.log(_this3.posts);
     });
     console.log(this.posts);
   },
@@ -2198,7 +2211,7 @@ __webpack_require__.r(__webpack_exports__);
       this.error = false;
       this.$store.dispatch("retrieveToken", body).then(function (response) {
         _this.$router.push({
-          name: "Dashboard"
+          name: "Posts"
         });
       })["catch"](function (error) {
         _this.error = error.response.data;
@@ -62504,7 +62517,7 @@ var render = function() {
                       attrs: {
                         to: {
                           name: "PostDetails",
-                          params: { slug: post.slug }
+                          params: { id: post.id }
                         }
                       }
                     },
@@ -81528,7 +81541,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
     name: "Posts",
     component: _components_Admin_PostsComponent__WEBPACK_IMPORTED_MODULE_2__["default"]
   }, {
-    path: '/post/:slug',
+    path: '/post/:id',
     name: "PostDetails",
     component: _components_Admin_PostComponent__WEBPACK_IMPORTED_MODULE_3__["default"],
     props: true

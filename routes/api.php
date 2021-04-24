@@ -28,9 +28,9 @@ Route::middleware('auth:api')->group(function () {
             Route::get('logout', 'Auth\AuthController@logout');
             Route::post('user', 'Auth\AuthController@user');
             Route::resource('posts', 'Admin\PostController')->only([
-                'store', 'create', 'update', 'destroy'
+                'store', 'create', 'update', 'destroy', 'index', 'show'
+
             ]);
         });
     });
 });
-

@@ -67,7 +67,7 @@
         data() {
             return {
                 moment: moment,
-                slug: this.$route.params.slug,
+                id: this.$route.params.id,
                 post: [],
                 token: this.$store.state.token,
                 edit: false,
@@ -117,9 +117,12 @@
             }
         },
         created() {
-            console.log(this.slug)
+            console.log("this.id")
+            console.log(this.id)
             axios
-                .get('/api/posts/' + this.slug)
+                .get('/api/auth/posts/' + this.id, {
+                    headers: {'Authorization': "Bearer " + this.token}
+                })
                 .then(response => {
                     this.post = response.data
                     console.log(this.post)
