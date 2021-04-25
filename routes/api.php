@@ -25,6 +25,7 @@ Route::middleware('auth:api')->group(function () {
             'middleware' => 'auth:api'
         ], function () {
             Route::post('/post/uploadImage', 'Admin\PostController@uploadImage');
+            Route::get('/category/getPosts/{id}/{limit}', 'Admin\CategoryController@getPosts');
             Route::get('logout', 'Auth\AuthController@logout');
             Route::post('user', 'Auth\AuthController@user');
             Route::resource('posts', 'Admin\PostController')->only([
@@ -34,6 +35,9 @@ Route::middleware('auth:api')->group(function () {
                 'store', 'create', 'update', 'destroy', 'index', 'show'
             ]);
             Route::resource('users', 'Admin\UserController')->only([
+                'store', 'create', 'update', 'destroy', 'index', 'show'
+            ]);
+            Route::resource('categories', 'Admin\CategoryController')->only([
                 'store', 'create', 'update', 'destroy', 'index', 'show'
             ]);
         });

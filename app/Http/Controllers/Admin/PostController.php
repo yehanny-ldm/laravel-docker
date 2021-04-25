@@ -43,13 +43,24 @@ class PostController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PostStoreRequest $request)
+    public function store(Request $request)
     {
 
-        $post = new Post;
+        $image = $request->file('image');
+
+        $imageContent = file_get_contents($image);
+        $extension = $image->getClientOriginalExtension();
+
+        $name = Uuid::generate()->string . '.' . $extension;
+        Storage::disk('public')->put("images/$name", $imageContent);
+
+        $post = new Post();
+        $post->image = $name;
         $post->title = $request->title;
         $post->content = $request->content_post;
+        $post->category_id = $request->category_id;
         $post->user_id = Auth::id();
+
         $response = [
             "message" => "Post generado correctamente",
             "code" => 200

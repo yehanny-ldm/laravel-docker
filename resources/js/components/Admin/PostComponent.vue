@@ -71,55 +71,35 @@
                             </div>
                         </div>
 
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 ">
+                                <span class="float-right">{{ comments.length }} comentarios</span>
+                            </div>
+                        </div>
                         <div class="form-floating row mt-2">
                             <textarea class="form-control" v-model="newComment" placeholder="Comentario"
                                       id="floatingTextarea2" style="height: 100px"></textarea>
-                            <button type="button" class="btn btn-secondary mt-2">Enviar</button>
+                            <button v-on:click="saveComment" type="button" class="btn btn-secondary mt-2">Enviar
+                            </button>
                         </div>
+                        <hr>
 
 
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <CategoriesComponent :postId="this.$route.params.id"></CategoriesComponent>
+            </div>
 
+            <hr>
 
-            <!--            <div class="card col-lg-12" v-show="edit">
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="title" class="col-form-label">T&iacute;tulo:</label>
-                                    <input v-model="post.title" type="text" class="form-control" id="title">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="content" class="col-form-label">Contenido:</label>
-                                    <textarea rows="10" v-model="post.content" class="form-control" id="content"></textarea>
-                                </div>
-
-                                <div class="spinner-border" role="status" v-show="loading">
-                                </div>
-                                <div v-show="!loading" class="btn-group" role="group"
-                                     aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary" @click="editPost">Guardar</button>
-                                    <button type="button" class="btn btn-danger" @click="edit = false">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card col-lg-12" v-show="!edit">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ post.title }}</h5>
-                                <p class="card-text">{{ post.content }}</p>
-                                <p class="card-subtitle mb-2 text-muted">
-                                    {{ moment(post.created_at).format('LLLL') }}
-                                </p>
-                                <div class="spinner-border" role="status" v-show="loading">
-                                </div>
-                                <button class="btn btn-danger" v-show="loading" @click="deleteP = false; loading = false;">Cancelar
-                                    borrado
-                                </button>
-
-                            </div>
-                        </div>-->
-
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-sm-12 col-xs-12 mt-4">
+                <CommentsComponent :postId="this.$route.params.id"></CommentsComponent>
+            </div>
         </div>
 
     </div>
@@ -129,9 +109,15 @@
 <script>
 import moment from "moment";
 import axios from 'axios';
+import CommentsComponent from './CommentsComponent'
+import CategoriesComponent from './CategoriesComponent'
 
 export default {
     name: "Post",
+    components: {
+        CommentsComponent,
+        CategoriesComponent
+    },
     data() {
         return {
             moment: moment,
@@ -153,6 +139,26 @@ export default {
     },
 
     methods: {
+        saveComment() {
+            this.loading = true
+
+            axios
+                .post('/api/auth/comments/', {
+                    body: this.newComment,
+                    user_id: this.post.user_id,
+                    post_id: this.post.id,
+                    category_id: this.category_id,
+                }, {
+                    headers: {
+                        'Authorization': "Bearer " + this.token,
+                    }
+                })
+                .then(response => {
+                    this.loading = false
+                    this.edit = false
+                    console.log(this.post)
+                })
+        },
         onFileChange(event) {
             this.file = event.target.files[0];
             this.uploadImage()
@@ -194,13 +200,9 @@ export default {
                     console.log(this.post)
                 })
         },
-        async deletePost() {
+        deletePost() {
             this.edit = false;
             this.loading = true;
-            setTimeout(() => this.deletePostCall(), 8000);
-        },
-        deletePostCall() {
-
             if (this.deleteP) {
                 axios
                     .delete('/api/auth/posts/' + this.post.id, {

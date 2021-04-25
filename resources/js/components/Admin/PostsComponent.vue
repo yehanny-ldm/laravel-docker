@@ -18,6 +18,15 @@
                             Ha ocurrido un error al crear Post
                         </div>
                         <form>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="filename" class="custom-file-input" id="inputFileUpload"
+                                           v-on:change="onFileChange">
+                                    <label class="custom-file-label" ref="uploadFile" for="inputFileUpload">Choose
+                                        file</label>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="recipient-name" class="col-form-label">T&iacute;tulo:</label>
                                 <input v-model="title" type="text" class="form-control" id="recipient-name">
@@ -25,6 +34,16 @@
                             <div class="form-group">
                                 <label for="message-text" class="col-form-label">Content:</label>
                                 <textarea v-model="content" class="form-control" id="message-text"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Categoría:</label>
+                                <select v-model="selectCat" class="form-select" aria-label="Default select example">
+                                    <option v-for="category in categories" :value="category.id">{{
+                                            category.name
+                                        }}
+                                    </option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -63,9 +82,10 @@
 
             <div class="col" v-for="post in filteredResources" :key="post.id">
                 <div class="card mb-3">
+                    <img :src="'/storage/images/' + post.image" class="card-img-top" alt="" style="max-height: 250px;">
+
                     <div class="card-body">
                         <h5 class="card-title">{{ post.title }}</h5>
-                        <p class="card-text">{{ post.content }}</p>
                         <p class="card-text">
                             <small class="text-muted">
                                 {{ moment(post.created_at, "DD-MM-YYYY").fromNow() }}
@@ -96,8 +116,11 @@ export default {
     data() {
         return {
             moment: moment,
+            selectCat: "",
             posts: [],
             loading: true,
+            categories: [],
+            category: [],
             current_page: null,
             last_page: null,
             token: this.$store.state.token,
@@ -107,6 +130,9 @@ export default {
         }
     },
     methods: {
+        onFileChange(event) {
+            this.file = event.target.files[0];
+        },
         changePage(page) {
             axios
                 .get('/api/auth/posts/?page=' + page, {
@@ -121,7 +147,28 @@ export default {
                 })
         },
         savePost() {
-            axios
+
+            let formData = new FormData();
+
+            formData.append("image", this.file);
+            formData.append("title", this.title);
+            formData.append("content_post", this.content);
+            formData.append("category_id", this.selectCat);
+
+            axios.post('api/auth/posts', formData, {
+                headers: {
+                    'Authorization': "Bearer " + this.token
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                    this.post.image = res.data.fileName
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            /*axios
                 .post('api/auth/posts', {
                     "title": this.title,
                     "content_post": this.content
@@ -139,7 +186,7 @@ export default {
                     console.log(response.data)
 
                 }
-            );
+            );*/
         }
     },
     created() {
@@ -155,6 +202,14 @@ export default {
                 this.last_page = response.data.last_page
                 console.log(this.posts)
 
+            })
+
+        axios
+            .get('/api/auth/categories', {
+                headers: {'Authorization': "Bearer " + this.token}
+            })
+            .then(response => {
+                this.categories = response.data
             })
 
         console.log(this.posts)

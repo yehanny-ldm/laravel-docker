@@ -24,6 +24,10 @@ class CommentValidation extends FormRequest
      */
     public function rules()
     {
-        return [ 'body' => 'required|max:500' ];
+        return [
+            'user_id' => 'required',
+            'post_id' => 'required',
+            'body' => 'required|max:500'
+        ];
     }
 }
