@@ -49,14 +49,12 @@ const store = new Vuex.Store({
                         headers: { 'Authorization': "Bearer " + context.state.token }
                     })
                         .then(response => {
-                            //console.log(response)
                             localStorage.removeItem('access_token')
                             context.commit('destroyToken')
 
                             resolve(response)
                         })
                         .catch(error => {
-                            //console.log(error)
                             localStorage.removeItem('access_token')
                             context.commit('destroyToken')
 

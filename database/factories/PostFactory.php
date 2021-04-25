@@ -18,7 +18,7 @@ use Faker\Generator as Faker;
 $factory->define(Post::class, function (Faker $faker) {
     return [
 //        'image' => $faker->image(storage_path('images'),640,380,null,false),
-        'image' => storage_path('images\fejk.jpg'),
+        'image' => 'fejk.jpg',
         'title' => $faker->title,
         'content' => $faker->realText(),
         'user_id' => 1, // password

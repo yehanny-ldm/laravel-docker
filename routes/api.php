@@ -33,6 +33,9 @@ Route::middleware('auth:api')->group(function () {
             Route::resource('comments', 'Admin\CommentsController')->only([
                 'store', 'create', 'update', 'destroy', 'index', 'show'
             ]);
+            Route::resource('users', 'Admin\UserController')->only([
+                'store', 'create', 'update', 'destroy', 'index', 'show'
+            ]);
         });
     });
 });

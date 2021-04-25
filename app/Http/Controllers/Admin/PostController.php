@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
+use Webpatser\Uuid\Uuid;
 
 
 class PostController extends Controller
@@ -92,20 +93,21 @@ class PostController extends Controller
         ]);
 
         $image = $request->file('image');
-        $extension = $image->getClientOriginalExtension();
-        $timestampName = time() . '.' . $extension;
-
-        $url = storage_path('images/' . $timestampName);
 
         $imageContent = file_get_contents($image);
-        Storage::put("images/", $imageContent);
+        $extension = $image->getClientOriginalExtension();
+
+        $name = Uuid::generate()->string . '.' . $extension;
+        Storage::disk('public')->put("images/$name", $imageContent);
 
         $post = Post::find($request->id);
-        $post->image = $url;
+        $post->image = $name;
+        $post->save();
 
         $response = [
             "message" => "Post editado correctamente",
-            "code" => 200
+            "code" => 200,
+            "fileName" => $name
         ];
 
         if (!$post->save()) {
