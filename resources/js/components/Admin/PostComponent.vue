@@ -67,6 +67,7 @@
             </div>
 
         </div>
+        
     </div>
 
 </template>
@@ -82,6 +83,7 @@ export default {
             moment: moment,
             id: this.$route.params.id,
             post: [],
+            comments: [],
             token: this.$store.state.token,
             edit: false,
             title: '',
@@ -164,6 +166,15 @@ export default {
             })
             .then(response => {
                 this.post = response.data
+                console.log(this.post)
+            });
+
+        axios
+            .get('/api/auth/comments/' + this.id, {
+                headers: {'Authorization': "Bearer " + this.token}
+            })
+            .then(response => {
+                this.comments = response.data
                 console.log(this.post)
             })
     }

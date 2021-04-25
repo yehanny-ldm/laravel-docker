@@ -29,7 +29,9 @@ Route::middleware('auth:api')->group(function () {
             Route::post('user', 'Auth\AuthController@user');
             Route::resource('posts', 'Admin\PostController')->only([
                 'store', 'create', 'update', 'destroy', 'index', 'show'
-
+            ]);
+            Route::resource('comments', 'Admin\CommentsController')->only([
+                'store', 'create', 'update', 'destroy', 'index', 'show'
             ]);
         });
     });

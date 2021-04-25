@@ -1815,6 +1815,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1824,6 +1825,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       moment: moment__WEBPACK_IMPORTED_MODULE_1___default.a,
       id: this.$route.params.id,
       post: [],
+      comments: [],
       token: this.$store.state.token,
       edit: false,
       title: '',
@@ -1923,6 +1925,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     }).then(function (response) {
       _this4.post = response.data;
+      console.log(_this4.post);
+    });
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/api/auth/comments/' + this.id, {
+      headers: {
+        'Authorization': "Bearer " + this.token
+      }
+    }).then(function (response) {
+      _this4.comments = response.data;
       console.log(_this4.post);
     });
   }

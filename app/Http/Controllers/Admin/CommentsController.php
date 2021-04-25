@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+
 
 use App\Comment;
+use App\Http\Controllers\Controller;
 use App\Post;
 use Illuminate\Http\Request;
 
@@ -14,23 +16,6 @@ class CommentsController extends Controller
      */
     public function __construct() {
         $this->middleware('auth');
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(CommentValidation $request)
-    {
-        $post = Post::findOrFail($request->post_id);
-
-        Comment::create([
-            'body' => $request->body,
-            'user_id' => Auth::id(),
-            'post_id' => $post->id
-        ]);
-        return redirect()->route('posts.show', $post->id);
     }
 
     /**
@@ -60,9 +45,9 @@ class CommentsController extends Controller
      * @param  \App\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function show(Comment $comment)
+    public function show($id_post)
     {
-        //
+        return Post::find($id_post)->comments;
     }
 
     /**
