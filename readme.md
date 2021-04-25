@@ -1,77 +1,58 @@
-# Laravel + Apache + Docker
 
-## Description
-Start developing a fresh Laravel application with `docker` using `docker-compose`.
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+</p>
 
-The images used in this repo is `php:7.2-apache` and `mysql:5.7`. The goal is to make setting up the development as simple as possible.
+## Auroblog por Alejandro Becerra
 
-## Up and running
-Clone the repo:
-```
-$ git clone https://github.com/laravel/laravel.git
-$ cd laravel
-```
+Instrucciones de instalación
 
-Copy `.env.example` to `.env`
+- Crear .env con base a .env.example
 ```
-$ cp .env.example .env 
+    cp .env.example .env //
 ```
-
-Build the images and start the services:
+- Construya los contenedores docker
 ```
-docker-compose build
-docker-compose up -d
+    docker-compose build
 ```
-
-## Helper scripts
-Running `composer`, `php artisan` or `phpunit` against the `php` container with helper scripts in the main directory:
-
-### container
-Running `./container` takes you inside the `laravel-app` container under user uid(1000) (same with host user)
+- Monte los contenedores docker
 ```
-$ ./container
-devuser@8cf37a093502:/var/www/html$
+    docker-compose up -d
 ```
-### db
-Running `./db` connects to your database container's daemon using mysql client.
+- Instale paquetes composer
 ```
-$ ./db
-mysql>
+    composer install && composer update
+```
+- Inicialice dump-autoload
+```
+    composer dump-autoload
+``` 
+- Instale paquete npm
+```
+    npm install
+``` 
+- Migrar y llenar base de datos **SQLite**
+```
+    php artisan migrate && php artisan db:seed
 ```
 
-### composer
-Run `composer` command, example:
+- Ejecute por separado los siguientes comando
 ```
-$ ./composer dump-autoload
-Generating optimized autoload files> Illuminate\Foundation\ComposerScripts::postAutoloadDump
-> @php artisan package:discover --ansi
-Discovered Package: beyondcode/laravel-dump-server
-Discovered Package: fideloper/proxy
-Discovered Package: laravel/tinker
-Discovered Package: nesbot/carbon
-Discovered Package: nunomaduro/collision
-Package manifest generated successfully.
-Generated optimized autoload files containing 3527 classes
+    php artisan serve
+    npm run watch
+```  
+- Ingresar a localhost
+
+- Para ingresar:
 ```
-
-### php-artisan
-Run `php artisan` commands, example:
+    email: admin@admin.com
+    password: 123456
 ```
-$ ./php-artisan make:controller BlogPostController --resource
-php artisan make:controller BlogPostController --resource
-Controller created successfully.
-```
+## Security Vulnerabilities
 
-### phpunit
-Run `./vendor/bin/phpunit` to execute tests, example:
-```
-$ ./phpunit --group=failing
-vendor/bin/phpunit --group=failing
-PHPUnit 7.5.8 by Sebastian Bergmann and contributors.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [a.becor94@gmail.com](mailto:a.becor94@gmail.com). All security vulnerabilities will be promptly addressed.
 
+## License
 
-
-Time: 34 ms, Memory: 6.00 MB
-
-No tests executed!
-```
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
