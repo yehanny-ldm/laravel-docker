@@ -16,7 +16,6 @@ use Illuminate\Http\Request;
 Route::post('login', 'Auth\AuthController@login');
 Route::post('signup', 'Auth\AuthController@signup');
 
-
 Route::middleware('auth:api')->group(function () {
     Route::group([
         'prefix' => 'auth'
@@ -25,6 +24,7 @@ Route::middleware('auth:api')->group(function () {
         Route::group([
             'middleware' => 'auth:api'
         ], function () {
+            Route::post('/post/uploadImage', 'Admin\PostController@uploadImage');
             Route::get('logout', 'Auth\AuthController@logout');
             Route::post('user', 'Auth\AuthController@user');
             Route::resource('posts', 'Admin\PostController')->only([

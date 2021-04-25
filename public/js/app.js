@@ -1802,6 +1802,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1814,6 +1827,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       token: this.$store.state.token,
       edit: false,
       title: '',
+      filename: '',
+      file: '',
       content: '',
       loading: false,
       cancelDelete: false,
@@ -1821,7 +1836,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
-    editPost: function editPost() {
+    onFileChange: function onFileChange(event) {
+      this.file = event.target.files[0];
+    },
+    uploadImage: function uploadImage(e) {
+      var formData = new FormData();
+      formData.append("image", this.file);
+      formData.append("id", this.post.id);
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/api/auth/post/uploadImage', formData, {
+        headers: {
+          'Authorization': "Bearer " + this.token
+        }
+      }).then(function (res) {
+        console.log(res);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editPost: function editPost(e) {
       var _this = this;
 
       this.loading = true;
@@ -61974,6 +62006,33 @@ var render = function() {
     _c("br"),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "input-group" }, [
+        _c("div", { staticClass: "custom-file" }, [
+          _c("input", {
+            staticClass: "custom-file-input",
+            attrs: { type: "file", name: "filename", id: "inputFileUpload" },
+            on: { change: _vm.onFileChange }
+          }),
+          _vm._v(" "),
+          _c(
+            "label",
+            {
+              staticClass: "custom-file-label",
+              attrs: { for: "inputFileUpload" }
+            },
+            [_vm._v("Choose file")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "input-group-append" }, [
+          _c("input", {
+            staticClass: "btn btn-primary",
+            attrs: { value: "Upload" },
+            on: { click: _vm.uploadImage }
+          })
+        ])
+      ]),
+      _vm._v(" "),
       _c(
         "div",
         {

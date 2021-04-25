@@ -17,6 +17,18 @@
         <br>
         <div class="row">
 
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" name="filename" class="custom-file-input" id="inputFileUpload"
+                           v-on:change="onFileChange">
+                    <label class="custom-file-label" for="inputFileUpload">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <input v-on:click="uploadImage" class="btn btn-primary" value="Upload">
+                </div>
+            </div>
+
+
             <div class="card col-lg-12" v-show="edit">
                 <div class="card-body">
                     <div class="mb-3">
@@ -53,82 +65,109 @@
 
                 </div>
             </div>
+
         </div>
     </div>
 
 </template>
 
 <script>
-    import moment from "moment";
-    import axios from 'axios';
+import moment from "moment";
+import axios from 'axios';
 
-    export default {
-        name: "Post",
-        data() {
-            return {
-                moment: moment,
-                id: this.$route.params.id,
-                post: [],
-                token: this.$store.state.token,
-                edit: false,
-                title: '',
-                content: '',
-                loading: false,
-                cancelDelete: false,
-                deleteP: true
-            }
+export default {
+    name: "Post",
+    data() {
+        return {
+            moment: moment,
+            id: this.$route.params.id,
+            post: [],
+            token: this.$store.state.token,
+            edit: false,
+            title: '',
+            filename: '',
+            file: '',
+            content: '',
+            loading: false,
+            cancelDelete: false,
+            deleteP: true
+        }
+    },
+    methods: {
+        onFileChange(event) {
+            this.file = event.target.files[0];
         },
-        methods: {
-            editPost() {
-                this.loading = true
+        uploadImage(e) {
+            let formData = new FormData();
+
+            formData.append("image", this.file);
+            formData.append("id", this.post.id);
+
+            axios.post('/api/auth/post/uploadImage', formData, {
+                headers: {
+                    'Authorization': "Bearer " + this.token
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        editPost(e) {
+            this.loading = true
+
+            axios
+                .put('/api/auth/posts/' + this.post.id, {
+                    title: this.post.title,
+                    content_post: this.post.content,
+                }, {
+                    headers: {
+                        'Authorization': "Bearer " + this.token,
+                    }
+                })
+                .then(response => {
+                    this.loading = false
+                    this.edit = false
+                    console.log(this.post)
+                })
+        },
+        async deletePost() {
+            this.edit = false;
+            this.loading = true;
+            setTimeout(() => this.deletePostCall(), 8000);
+        },
+        deletePostCall() {
+
+            if (this.deleteP) {
                 axios
-                    .put('/api/auth/posts/' + this.post.id, {
-                        title: this.post.title,
-                        content_post: this.post.content,
-                    }, {
+                    .delete('/api/auth/posts/' + this.post.id, {
                         headers: {'Authorization': "Bearer " + this.token}
                     })
                     .then(response => {
-                        this.loading = false
-                        this.edit = false
-                        console.log(this.post)
+                        this.loading = false;
+                        this.$router.push({
+                            name: "Posts"
+                        })
+                        console.log(response)
                     })
-            },
-            async deletePost() {
-                this.edit = false;
-                this.loading = true;
-                setTimeout(()=> this.deletePostCall(),8000);
-            },
-            deletePostCall() {
-
-                if (this.deleteP) {
-                    axios
-                        .delete('/api/auth/posts/' + this.post.id, {
-                            headers: {'Authorization': "Bearer " + this.token}
-                        })
-                        .then(response => {
-                            this.loading = false;
-                            this.$router.push({
-                                name: "Posts"
-                            })
-                            console.log(response)
-                        })
-                }
             }
-        },
-        created() {
-            console.log("this.id")
-            console.log(this.id)
-            axios
-                .get('/api/auth/posts/' + this.id, {
-                    headers: {'Authorization': "Bearer " + this.token}
-                })
-                .then(response => {
-                    this.post = response.data
-                    console.log(this.post)
-                })
         }
+    },
+    created() {
+        console.log("this.id")
+        console.log(this.id)
+        axios
+            .get('/api/auth/posts/' + this.id, {
+                headers: {'Authorization': "Bearer " + this.token}
+            })
+            .then(response => {
+                this.post = response.data
+                console.log(this.post)
+            })
     }
+}
 </script>
 
 <style scoped>

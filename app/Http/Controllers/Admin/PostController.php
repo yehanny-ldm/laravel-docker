@@ -7,6 +7,7 @@ use App\Http\Requests\PostStoreRequest;
 use App\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 
@@ -82,6 +83,40 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $this->validate($request, [
+            'image' => 'required',
+        ]);
+
+        $image = $request->file('image');
+        $extension = $image->getClientOriginalExtension();
+        $timestampName = time() . '.' . $extension;
+
+        $url = storage_path('images/' . $timestampName);
+
+        $imageContent = file_get_contents($image);
+        Storage::put("images/", $imageContent);
+
+        $post = Post::find($request->id);
+        $post->image = $url;
+
+        $response = [
+            "message" => "Post editado correctamente",
+            "code" => 200
+        ];
+
+        if (!$post->save()) {
+            $response['message'] = "Ha ocurrido un error al editar";
+            $response['status'] = 502;
+        }
+
+        return Response($response, $response['code']);
+
+
+        return response()->json(['success' => 'You have successfully uploaded "' . $file_name . '"']);
     }
 
     /**
