@@ -1,0 +1,52 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Refer to PHP method xdebug_info() to show errors on installation;
+            "name": "XDebug (Docker)",
+            "type": "php",
+            "request": "launch",
+            "port": 9002, // Same port as Docker Container
+            "log": true,
+            "externalConsole": false,
+            "hostname": "172.22.0.1", // On Windows and Mac use host.docker.internal. On Linux check your Network Gateway IP to use on client_host
+            "pathMappings": {
+                // Container folder : Local folder
+                "/var/www/html": "${workspaceFolder}"
+            },
+            "xdebugSettings": {
+                "max_data": 65535,
+                "show_hidden": 1,
+                "max_children": 100,
+                "max_depth": 5
+            },
+            "ignore": [
+                "**/vendor/**/*.php"
+            ]
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "vuejs: chrome",
+            "url": "http://localhost:8009",
+            "webRoot": "${workspaceFolder}/src",
+            "breakOnLoad": true,
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            }
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "name": "vuejs: firefox",
+            "url": "http://localhost:8009",
+            "webRoot": "${workspaceFolder}/src",
+            "pathMappings": [
+                {
+                    "url": "webpack:///src/",
+                    "path": "${webRoot}/"
+                }
+            ]
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:7.3-apache
 
 USER root
 
@@ -42,9 +42,29 @@ RUN docker-php-ext-install \
 RUN docker-php-ext-configure \
     zip
 
+# Install XDebug
+# [Option] Install zsh
+ARG INSTALL_ZSH="true"
+# [Option] Upgrade OS packages to their latest versions
+ARG UPGRADE_PACKAGES="false"
+# [Option] Enable non-root Docker access in container
+ARG ENABLE_NONROOT_DOCKER="true"
+RUN pecl install xdebug mcrypt-1.0.2 && docker-php-ext-enable xdebug mcrypt\
+    # xdebug.log=/var/www/html/xdebug.log \n\
+    # On Windows and Mac use xdebug.client_host=host.docker.internal \n\
+    && echo "\n\
+    xdebug.mode=debug \n\
+    xdebug.start_with_request=yes \n\
+    xdebug.client_host=172.22.0.1 \n\
+    xdebug.client_port=9002 \n\
+    xdebug.remote_handler=dbgp \n\
+    xdebug.idekey=VSCODE \n\
+    xdebug.log=/var/www/html/xdebug.log \n\
+    " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    chown -R www-data:www-data /var/www/html/
 
 # 2. Apache configs + document root.
-RUN echo "ServerName laravel-app.local" >> /etc/apache2/apache2.conf
+RUN echo "ServerName laravel_app.test" >> /etc/apache2/apache2.conf
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
